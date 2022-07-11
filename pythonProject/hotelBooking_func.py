@@ -1,3 +1,4 @@
+from genericpath import exists
 import pstats
 import sqlite3
 
@@ -108,8 +109,10 @@ def insert_customer():
 
         if confirm_num == '123':
             menuSel = input('''
-고객 관리 페이지 입니다.
-리스트 -> 1  수정 -> 2  삭제 -> 3  종료 -> Enter
+==========================================================
+                    고객 관리 페이지
+    1. 리스트   2. 수정    3. 삭제    5. 종료 시 Enter
+==========================================================
 >>>''')
             # 리스트
             if menuSel == '1':
@@ -138,56 +141,85 @@ def insert_customer():
             # 수정
             elif menuSel == '2':
                 cid = input('수정할 회원 아이디 >>>')
-                col = input('수정할 항목(pw, name, tel) >>>')
-                value = input('수정할 내용 >>>')
 
-                sql = f'update customers set {col} = ? where cid = ?'
-                cur.execute(sql,(value,cid))
-                print(cid + ' 님의 데이터가 수정되었습니다.')
+                # 회원 아이디 존재 확인
+                cur.execute('select exists(select cid from customers where cid = ?)',(cid,))
+                if cur.fetchone()[0]:
+                    col = input('수정할 항목(pw, name, tel) >>>')
+                    value = input('수정할 내용 >>>')
 
-                con.commit()
+                    sql = f'update customers set {col} = ? where cid = ?'
+                    cur.execute(sql,(value,cid))
+                    print(cid + ' 님의 데이터가 수정되었습니다.')
+
+                    con.commit()
+                else:
+                    print('존재하지 않는 회원 아이디입니다.')
 
             # 삭제
             elif menuSel == '3':
                 cid = input('삭제할 회원 아이디 >>>')
-                confirm = input('영구적으로 삭제 됩니다. 삭제하시겠습니까? Y/N >>>')
+                # 회원 아이디 존재 확인
+                cur.execute('select exists(select cid from customers where cid = ?)',(cid,))
+                if cur.fetchone()[0]:
+                    
+                    confirm = input('영구적으로 삭제 됩니다. 삭제하시겠습니까? Y/N >>>')
+                    a = confirm.upper()
+                    
+                    if a == 'Y':
+                        sql = f'delete from customers where cid = ?'
+                        cur.execute(sql,(cid,))
+                        print(cid + ' 님의 정보가 성공적으로 삭제됐습니다.')
+                        
+                        con.commit()
 
-                if confirm == 'Y' or 'y':
-                    sql = f'delete from customers where cid = ?'
-                    cur.execute(sql,(cid,))
-                    print(cid + ' 님의 정보가 성공적으로 삭제됐습니다.')
-
-                elif confirm == 'N' or 'n':
-                    print('삭제 실패')
-                
+                    elif a == 'N':
+                        print('삭제 실패')
+                    
+                    else:
+                        print('선택이 완료되지 않았습니다.')
                 else:
-                    print('선택이 완료되지 않았습니다.')
-
-                con.commit()
+                    print('존재하지 않는 회원 아이디입니다.')
+                    
 
             else:
                 print('항목을 선택하세요.')
+        
+        else:
+            print('관리자 권한이 없습니다. 문의 051-222-2222')
 
     # 고객 회원가입
     elif select == '2':
         cid = input('아이디 : ')
-        pw = input('비밀번호 : ')
-        name = input('이름 : ')
-        tel = input('전화번호 : ')
-        birth = input('생년월일 (0000-00-00) : ')
-        gender = input('성별 (남 - M, 여 - F) : ')
+        #chkID = f'select cid from customers where cid = ?'
+        
+        #for a in cur.execute(chkID,(cid,)):
+            #b = a[0]
+            #if b is True:
+        cur.execute('select exists(select cid from customers where cid = ?)',(cid,))
+        if cur.fetchone()[0]:
+            print('이미 존재하는 아이디입니다.')
+        else:
+            pw = input('비밀번호 : ')
+            name = input('이름 : ')
+            tel = input('전화번호 : ')
+            birth = input('생년월일 (0000-00-00) : ')
+            gender = input('성별 (남 - M, 여 - F) : ')
+            inGender = gender
+            inGender.upper()
 
-        data  = (cid, pw, name, tel, birth, gender)
-        sql = '''insert into customers(cid, pw, name, tel, birth, gender) 
-                values(?, ?, ?, ?, ?, ?)
-        '''
+            data  = (cid, pw, name, tel, birth, gender)
+            sql = '''insert into customers(cid, pw, name, tel, birth, gender) 
+                    values(?, ?, ?, ?, ?, ?)
+            '''
 
-        print('''
+            print('''
    ᕱ ᕱ
 ♡ (•ˬ•) ♡ 반갑습니다. ''' + name + ' 님!')
 
-        cur.execute(sql, data)
-        con.commit()
+            cur.execute(sql, data)
+            con.commit()
+            
 
     else:
         print('항목을 선택하세요.')
@@ -209,24 +241,74 @@ def show_room():
 
         if confirm_num == '123':
             sel_menu = input('''
-반갑습니다!
-객실 타입 추가 -> 1  객실 리스트 추가 -> 2
+==========================================================
+                객실 관리 페이지
+        1. 객실 타입     2. 객실 리스트
+==========================================================
 >>>''')
-            #객실 타입 추가
+            #객실 타입 메뉴
             if sel_menu == '1':
-                tid = input('객실타입 번호 >>>')
-                tname = input('객실 타입 >>>')
-                tfull_name = input('객실 타입 풀네임 >>>')
-                tinfo = input('객실 정보 >>>')
-                price = input('객단가 >>>')
+                type_menu = input('''
+==========================================================
+                객실 타입 관리 페이지
+  1. 리스트   2. 추가    3. 수정    4. 삭제    5. 종료 시 Enter
+==========================================================
+                ''')
+                # 객실 타입 리스트
+                if type_menu == '1':
+                    cur.execute(tid, tname, tfull_name, tinfo, price)
+                    data = cur.fetchall()
+                    for list in data:
+                        print(f'객실 타입 번호 : {list[0]} || 객실 타입 : {list[1]} || 풀 네임 : {list[2]} || 객실 정보 : {list[3]} || 객단가 : {list[4]}')
+                
+                # 객실 타입 추가
+                if type_menu == '2':
+                    tid = input('객실타입 번호 >>>')
+                    tname = input('객실 타입 >>>')
+                    tfull_name = input('객실 타입 풀네임 >>>')
+                    tinfo = input('객실 정보 >>>')
+                    price = input('객단가 >>>')
 
-                data = (tid, tname, tfull_name, tinfo, price)
-                sql = 'insert into roomType values(?, ?, ?, ?, ?)'
+                    data = (tid, tname, tfull_name, tinfo, price)
+                    sql = 'insert into roomType values(?, ?, ?, ?, ?)'
 
-                cur.execute(sql, data)
+                    cur.execute(sql, data)
 
-                con.commit()
-                con.close()
+                    con.commit()
+                
+                #객실 타입 수정
+                if type_menu == '3':
+                    tid = input('객실타입 번호 >>>')
+                    cur.execute('select exists(select tid from roomType where tid = ?)',(tid,))
+                    if cur.fetchone()[0]:
+                        col = input('수정할 항목(tname, tfull_name, tinfo, price) >>>')
+                        value = input('수정할 내용 >>>')
+
+                        sql = f'update roomType set {col} = ? where tid = ?'
+                        cur.execute(sql,(value,tid))
+
+                        con.commit()
+
+                # 객실 타입 삭제
+                if type_menu == '4':
+                    tid = input('객실타입 번호 >>>')
+                    cur.execute('select exists(select tid from roomType where tid = ?)',(tid,))
+                    if cur.fetchone()[0]:
+                        confirm = input('영구적으로 삭제 됩니다. 삭제하시겠습니까? Y/N >>>')
+                        a = confirm.upper()
+                        
+                        if a == 'Y':
+                            sql = f'delete from roomType where tid = ?'
+                            cur.execute(sql,(tid,))
+                            print('해당 정보가 성공적으로 삭제됐습니다.')
+                            
+                            con.commit()
+
+                        elif a == 'N':
+                            print('삭제 실패')
+                        
+                        else:
+                            print('선택이 완료되지 않았습니다.')
             
             #객실 리스트 추가
             elif sel_menu == '2':
