@@ -19,7 +19,9 @@ while True:
     elif menu =='3':
         hf.reservation()
     elif menu == '4':
-        pass
+        print('''
+   ᕱ    ᕱ                                         ᕱ     ᕱ
+(  ˵•́ ᴗ •̀˵) 문의 사항은 3333-5555 로 전화주세요. (˵•́ ᴗ •̀˵  )''')
     elif menu == '5':
         break
     else:

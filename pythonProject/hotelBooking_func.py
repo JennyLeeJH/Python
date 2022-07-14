@@ -115,7 +115,10 @@ def insert_customer():
 
                     con.commit()
                 else:
-                    print('존재하지 않는 회원 아이디입니다.')
+                    print('''
+     ᕱ   ᕱ
+¯\_( ◉ 3 ◉ )_/¯ 존재하지 않는 회원 아이디입니다.
+''')
 
             # 삭제
             elif menuSel == '3':
@@ -124,13 +127,17 @@ def insert_customer():
                 cur.execute('select exists(select cid from customers where cid = ?)',(cid,))
                 if cur.fetchone()[0]:
                     
-                    confirm = input('영구적으로 삭제 됩니다. 삭제하시겠습니까? Y/N >>>')
+                    confirm = input('''
+  ᕱ   ᕱ
+(๑´╹‸╹`๑)영구적으로 삭제 됩니다. 삭제하시겠습니까? Y/N 
+
+>>>''')
                     a = confirm.upper()
                     
                     if a == 'Y':
                         sql = f'delete from customers where cid = ?'
                         cur.execute(sql,(cid,))
-                        print(cid + ' 님의 정보가 성공적으로 삭제됐습니다.')
+                        print(cid + ' 님의 정보가 성공적으로 삭제됐습니다. ')
                         
                         con.commit()
 
@@ -140,14 +147,20 @@ def insert_customer():
                     else:
                         print('선택이 완료되지 않았습니다.')
                 else:
-                    print('존재하지 않는 회원 아이디입니다.')
+                    print('''
+     ᕱ   ᕱ
+¯\_( ◉ 3 ◉ )_/¯ 존재하지 않는 회원 아이디입니다.
+''')
                     
 
             else:
                 print('항목을 선택하세요.')
         
         else:
-            print('관리자 권한이 없습니다. 문의 051-222-2222')
+            print('''
+  ᕱ   ᕱ
+᧖(• ᦢ •)ᦣ 관리자 권한이 없습니다. 문의 051-222-2222
+''')
 
     # 고객 회원가입
     elif select == '2':
@@ -248,7 +261,11 @@ def show_room():
                 tid = input('객실타입 번호 >>>')
                 cur.execute('select exists(select tid from roomType where tid = ?)',(tid,))
                 if cur.fetchone()[0]:
-                    confirm = input('영구적으로 삭제 됩니다. 삭제하시겠습니까? Y/N >>>')
+                    confirm = input('''
+  ᕱ   ᕱ
+(๑´╹‸╹`๑)영구적으로 삭제 됩니다. 삭제하시겠습니까? Y/N 
+
+>>>''')
                     a = confirm.upper()
                     
                     if a == 'Y':
@@ -267,7 +284,10 @@ def show_room():
                 print('종료합니다.')
         
         else:
-            print('관리자 권한이 없습니다. 문의 051-222-2222')
+            print('''
+  ᕱ   ᕱ
+᧖(• ᦢ •)ᦣ 관리자 권한이 없습니다. 문의 051-222-2222
+''')
     
     # 객실 타입 - 회원    
     elif select == '2':
@@ -300,7 +320,6 @@ def reservation():
 [ 예약 관리 ]
 1. 예약 리스트    2. 수정    3. 삭제    4. 종료(Enter)
 >>>''')
-            cur.execute()
             # 예약 리스트
             if man_menu == '1':
                 cur.execute('''
@@ -310,21 +329,78 @@ def reservation():
                 ''')
                 data = cur.fetchall()
                 for list in data:
-                    print(f'IDX : {list[0]} || 회원 아이디 : {list[1]} || 객실 타입 : {list[2]} || 인원 : {list[3]} || 수량 : {list[4]} || 일자 : {list[5]} || 총 금액 : {list[6]}')
+                    print(f'{list[0]} || 회원 아이디 : {list[1]} || 객실 타입 : {list[2]} || 인원 : {list[3]} || 수량 : {list[4]} || 일자 : {list[5]} || 총 금액 : {list[6]}')
 
             # 예약 수정
             elif man_menu == '2':
-                pass
+                cid = input('수정할 예약 회원 아이디 >>>')
+                cur.execute('select exists(select cid from reservation where cid = ?)',(cid,))
+                if cur.fetchone()[0]:
+                    rdate = input('수정할 예약 일자 >>>')
+                    cur.execute('select exists(select rdate from reservation where cid = ? and rdate = ?)', (cid, rdate))
+                    if cur.fetchone()[0]:
+                        col = input('수정할 항목(tid, cnt_people, qty, rdate) >>>')
+                        value = input('수정할 내용 >>>')
+
+                        sql = f'update reservation set {col} = ? where cid = ? and rdate = ?'
+                        cur.execute(sql,(value, cid, rdate))
+
+                        print(cid + ' 님의 예약이 수정되었습니다.')
+                    else:
+                        print('''
+     ᕱ   ᕱ
+¯\_( ◉ 3 ◉ )_/¯ 예약 일자를 확인해주세요.
+''')
+                else:
+                    print('''
+     ᕱ   ᕱ
+¯\_( ◉ 3 ◉ )_/¯ 예약한 회원이 아닙니다.
+''')
 
             # 예약 삭제
             elif man_menu == '3':
-                pass
+                cid = input('삭제할 예약 회원 아이디 >>>')
+                cur.execute('select exists(select cid from reservation where cid = ?)',(cid,))
+                if cur.fetchone()[0]:
+                    rdate = input('삭제할 예약 일자 >>>')
+                    cur.execute('select exists(select rdate from reservation where cid = ? and rdate = ?)', (cid, rdate))
+                    if cur.fetchone()[0]:
+                        confirm = input('''
+  ᕱ   ᕱ
+(๑´╹‸╹`๑)영구적으로 삭제 됩니다. 삭제하시겠습니까? Y/N 
 
+>>>''')
+                        a = confirm.upper()
+                        
+                        if a == 'Y':
+                            sql = f'delete from reservation where cid = ? and rdate = ?'
+                            cur.execute(sql,(cid,rdate))
+
+                            print(cid + ' 님의 정보가 성공적으로 삭제됐습니다.')
+
+                            con.commit()
+                        elif a == 'N':
+                            print('삭제 실패')
+                        else:
+                            print('선택이 완료되지 않았습니다.')
+                    else:
+                        print('''
+     ᕱ   ᕱ
+¯\_( ◉ 3 ◉ )_/¯ 예약 일자를 확인해주세요.
+''')
+                else:
+                    print('''
+     ᕱ   ᕱ
+¯\_( ◉ 3 ◉ )_/¯ 예약한 회원이 아닙니다.
+''')
             else:
                 print('종료합니다.')
         
         else:
-            print('관리자 권한이 없습니다. 문의 051-222-2222')
+            print('''
+  ᕱ   ᕱ
+᧖(• ᦢ •)ᦣ 관리자 권한이 없습니다. 문의 051-222-2222
+''')
 
     # 예약 - 회원
     elif sel == '2':
@@ -351,32 +427,250 @@ def reservation():
                         cnt_people = input('예약 인원 : ')
                         qty = input('수량 : ')
                         rdate = input('예약 일자(0000-00-00 형식으로 적어주세요.) : ')
-
-                        data = (cid, tid, cnt_people, qty, rdate)
-                        sql = 'insert into reservation (cid, tid, cnt_people, qty, rdate) values(?, ?, ?, ?, ?)'
-
-                        cur.execute(sql, data)
-                        con.commit()
+                        for a in tid:
+                            data = (cid, a[0], cnt_people, qty, rdate)
+                            sql = 'insert into reservation (cid, tid, cnt_people, qty, rdate) values(?, ?, ?, ?, ?)'
+                            cur.execute(sql, data)
+                            con.commit()
                     else:
-                        print('해당 객실이 존재하지 않습니다.')
+                        print('''
+     ᕱ   ᕱ
+¯\_( ◉ 3 ◉ )_/¯ 해당 객실이 존재하지 않습니다.
+''')
                 
                 else:
-                    print('비밀번호가 일치하지 않습니다.')
+                    print('''
+     ᕱ   ᕱ
+¯\_( ◉ 3 ◉ )_/¯ 비밀번호가 일치하지 않습니다.
+''')
             else:
-                print('존재하지 않는 아이디입니다.')
+                print('''
+     ᕱ   ᕱ
+¯\_( ◉ 3 ◉ )_/¯ 아이디를 다시 확인해주세요.
+''')
         
         # 예약 확인
         elif mem_menu == '2':
-            pass
+            cid = input('회원 아이디 : ')
+            pw = input('비밀번호 : ')
+            # 회원 아이디 존재 확인
+            cur.execute('select exists(select cid from reservation where cid = ?)',(cid,))
+            if cur.fetchone()[0]:
+                # 아이디와 비밀번호 일치 확인
+                cur.execute('select exists(select cid from customers where cid = ? and pw = ?)', (cid,pw))
+                if cur.fetchone()[0]:
+                    sql = f'''
+                        select t3.name, t2.tname, t1.cnt_people, t1.qty, t1.rdate, t2.price * t1.qty
+                        from reservation t1, roomType t2, customers t3
+                        where t1.cid = t3.cid
+                        and t1.tid = t2.tid
+                        and t1.cid = ?
+                    '''
+                    data = cur.execute(sql,(cid,))
+                    for list in data:
+                        print(f'예약자 : {list[0]} || 객실 타입 : {list[1]} || 인원 : {list[2]} || 수량 : {list[3]} || 일자 : {list[4]} || 총 금액 : {list[5]}')
+                else:
+                    print('''
+     ᕱ   ᕱ
+¯\_( ◉ 3 ◉ )_/¯ 비밀번호가 일치하지 않습니다.
+''')
+
+            else:
+                print('''
+     ᕱ   ᕱ
+¯\_( ◉ 3 ◉ )_/¯ 아이디를 다시 확인해주세요.
+''')
 
         # 예약 변경
         elif mem_menu == '3':
-            pass
+            cid = input('회원 아이디 >>>')
+            pw = input('비밀번호 : ')
+            # 아이디와 비밀번호 일치 확인
+            cur.execute('select exists(select cid from customers where cid = ? and pw = ?)', (cid,pw))
+            if cur.fetchone()[0]:
+                rdate = input('예약 일자 >>>')
+                # 회원에 맞는 예약 일자 유무 확인
+                cur.execute('select exists(select rdate from reservation where cid = ? and rdate = ?)', (cid, rdate))
+                if cur.fetchone()[0]:
+                    sel_upMenu = input('''
+[ 수정할 항목을 선택해주세요 ]
+1. 객실 타입    2. 인원    3. 수량    4. 일자    5. 종료(Enter)
+>>>''')
+                    # 객실 타입 변경
+                    if sel_upMenu == '1':
+                        chg_tname = input('변경할 객실 타입을 입력해주세요 >>>')
+                        room_type = chg_tname.upper()
+                        # 객실 존재 확인
+                        cur.execute('select exists(select tid from roomType where tname = ?)', (room_type,))
+                        if cur.fetchone()[0]:
+                            chg_tid = cur.execute('select tid from roomType where tname = ?', (room_type,))
+                            for b in chg_tid:
+                                sql = f'update reservation set tid = ? where cid = ? and rdate = ?'
+                                cur.execute(sql,(b[0], cid, rdate))
+
+                                # 변경된 예약 정보 출력
+                                sql = f'''
+                                    select t3.name, t2.tname, t1.cnt_people, t1.qty, t1.rdate, t2.price * t1.qty
+                                    from reservation t1, roomType t2, customers t3
+                                    where t1.cid = t3.cid
+                                    and t1.tid = t2.tid
+                                    and t1.cid = ?
+                                '''
+                                data = cur.execute(sql,(cid,))
+                                for list in data:
+                                    print(f'''
+**************************************** 변경된 예약 정보 *******************************************
+예약자 : {list[0]} || 객실 타입 : {list[1]} || 인원 : {list[2]} || 수량 : {list[3]} || 일자 : {list[4]} || 총 금액 : {list[5]}
+''')
+
+                                con.commit()
+
+                                print(cid + ' 님의 예약이 수정되었습니다.')
+                                
+                        else:
+                            print('''
+     ᕱ   ᕱ
+¯\_( ◉ 3 ◉ )_/¯ 해당 객실이 존재하지 않습니다.
+''')
+
+                    # 인원 변경
+                    elif sel_upMenu == "2":
+                        chg_cnt = input('변경할 인원을 입력해주세요 >>>')
+                        sql = f'update reservation set cnt_people = ? where cid = ? and rdate = ?'
+                        cur.execute(sql,(chg_cnt,cid,rdate))
+
+                        # 변경된 예약 정보 출력
+                        sql = f'''
+                            select t3.name, t2.tname, t1.cnt_people, t1.qty, t1.rdate, t2.price * t1.qty
+                            from reservation t1, roomType t2, customers t3
+                            where t1.cid = t3.cid
+                            and t1.tid = t2.tid
+                            and t1.cid = ?
+                        '''
+                        data = cur.execute(sql,(cid,))
+                        for list in data:
+                            print(f'''
+**************************************** 변경된 예약 정보 *******************************************
+예약자 : {list[0]} || 객실 타입 : {list[1]} || 인원 : {list[2]} || 수량 : {list[3]} || 일자 : {list[4]} || 총 금액 : {list[5]}
+''')
+
+                        con.commit()
+
+                        print(cid + ' 님의 예약이 수정되었습니다.')
+
+                    # 수량 변경
+                    elif sel_upMenu == '3':
+                        chg_qty = input('변경할 수량을 입력해주세요 >>>')
+                        sql = f'update reservation set qty = ? where cid = ? and rdate = ?'
+                        cur.execute(sql,(chg_qty, cid, rdate))
+
+                        # 변경된 예약 정보 출력
+                        sql = f'''
+                            select t3.name, t2.tname, t1.cnt_people, t1.qty, t1.rdate, t2.price * t1.qty
+                            from reservation t1, roomType t2, customers t3
+                            where t1.cid = t3.cid
+                            and t1.tid = t2.tid
+                            and t1.cid = ?
+                        '''
+                        data = cur.execute(sql,(cid,))
+                        for list in data:
+                            print(f'''
+**************************************** 변경된 예약 정보 *******************************************
+예약자 : {list[0]} || 객실 타입 : {list[1]} || 인원 : {list[2]} || 수량 : {list[3]} || 일자 : {list[4]} || 총 금액 : {list[5]}
+''')
+
+                        con.commit()
+
+                        print(cid + ' 님의 예약이 수정되었습니다.')
+
+                    # 일자 변경
+                    elif sel_upMenu == '4':
+                        chg_rdate = input('변경할 일자을 입력해주세요(0000-00-00) >>>')
+                        sql = f'update reservation set rdate = ? where cid = ? and rdate = ?'
+                        cur.execute(sql,(chg_rdate, cid, rdate))
+
+                        # 변경된 예약 정보 출력
+                        sql = f'''
+                            select t3.name, t2.tname, t1.cnt_people, t1.qty, t1.rdate, t2.price * t1.qty
+                            from reservation t1, roomType t2, customers t3
+                            where t1.cid = t3.cid
+                            and t1.tid = t2.tid
+                            and t1.cid = ?
+                        '''
+                        data = cur.execute(sql,(cid,))
+                        for list in data:
+                            print(f'''
+**************************************** 변경된 예약 정보 *******************************************
+예약자 : {list[0]} || 객실 타입 : {list[1]} || 인원 : {list[2]} || 수량 : {list[3]} || 일자 : {list[4]} || 총 금액 : {list[5]}
+''')
+
+                        con.commit()
+
+                        print(cid + ' 님의 예약이 수정되었습니다.')
+                    else:
+                        print('종료합니다.')
+                    
+                else:
+                    print('''
+     ᕱ   ᕱ
+¯\_( ◉ 3 ◉ )_/¯ 예약 일자를 확인해주세요.
+''')
+            else:
+                print('''
+     ᕱ   ᕱ
+¯\_( ◉ 3 ◉ )_/¯ 비밀번호 혹은 아이디를 다시 확인해주세요.
+''')
 
         # 예약 취소
         elif mem_menu == '4':
-            pass
+            chk = input('''
+!!!!!!!!!!!!!!!!!!!!!!!! WARNING !!!!!!!!!!!!!!!!!!!!!!!!!
+해당 페이지는 삭제로 넘어가며 완료 시 복구할 수 없습니다.
+계속 진행하실 경우 Y 또는 y 를 선택하시고 
+중단을 원하실 경우 N 또는 n을 입력해주세요.
+>>>''')
+            chk_del = chk.upper()
+            if chk_del == 'Y':
+                cid = input('회원 아이디 >>>')
+                pw = input('비밀번호 : ')
+                # 아이디와 비밀번호 일치 확인
+                cur.execute('select exists(select cid from customers where cid = ? and pw = ?)', (cid,pw))
+                if cur.fetchone()[0]:
+                    rdate = input('예약 일자 >>>')
+                    # 회원에 맞는 예약 일자 유무 확인
+                    cur.execute('select exists(select rdate from reservation where cid = ? and rdate = ?)', (cid, rdate))
+                    if cur.fetchone()[0]:
+                        confirm = input('''
+  ᕱ   ᕱ
+(๑´╹‸╹`๑)영구적으로 삭제 됩니다. 삭제하시겠습니까? Y/N 
 
+>>>''')
+                        a = confirm.upper()
+                        
+                        if a == 'Y':
+                            sql = f'delete from reservation where cid = ? and rdate = ?'
+                            cur.execute(sql,(cid,rdate))
+
+                            print(cid + ' 님의 정보가 성공적으로 삭제됐습니다.')
+
+                            con.commit()
+                        elif a == 'N':
+                            print('삭제 실패')
+                        else:
+                            print('선택이 완료되지 않았습니다.')
+                    else:
+                        print('''
+     ᕱ   ᕱ
+¯\_( ◉ 3 ◉ )_/¯ 예약 일자를 확인해주세요.
+''')
+                else:
+                    print('''
+     ᕱ   ᕱ
+¯\_( ◉ 3 ◉ )_/¯ 비밀번호 혹은 아이디를 다시 확인해주세요.
+''')
+
+            elif chk_del == 'N':
+                print('예약 취소를 중단합니다.')
         else:
             print('종료합니다.')
 
