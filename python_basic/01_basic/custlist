@@ -1,0 +1,26 @@
+[
+ {
+  "name": "\ud64d\uae38\ub3d9",
+  "gender": "M",
+  "email": "hong123@gmail.com",
+  "birth": "2000"
+ },
+ {
+  "name": "\uae40\ub098\ub9ac",
+  "gender": "F",
+  "email": "kim111@gmail.com",
+  "birth": "2000"
+ },
+ {
+  "name": "\ubc15\uc815\ud76c",
+  "gender": "F",
+  "email": "park23@gmail.com",
+  "birth": "2000"
+ },
+ {
+  "name": "\uc548\uc120\ubbf8",
+  "gender": "F",
+  "email": "sun12@naver.com",
+  "birth": "1997"
+ }
+]
