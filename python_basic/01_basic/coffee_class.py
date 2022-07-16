@@ -1,0 +1,112 @@
+# # 커피자판기
+# 1. 커피자판기 2. 메뉴추가 3.메뉴삭제 4.메뉴목록 5.종료
+# - 프로그램이 시작될때 필요한 정보를 읽어서 시작합니다.
+# - 커피자판기 무한반복하면서 돈을 입력받고, 메뉴를 선택해서 처리
+# - 메뉴추가 자판기에서 판매하는 메뉴를 추가하는 기능(메뉴명,가격)
+# - 메뉴삭제는 전체 목록을 보여주고 삭제하고자하는 항목을 선택하도록 해서 삭제 처리
+# - 메뉴목록은 메뉴이름순,메뉴가격순으로 정렬해서 보여줌.
+# - 종료는 메뉴 정보를 저장하고 종료합니다.
+
+import json,sys
+
+class coffee:
+
+    def data_load(self, path):
+        f = open(path, 'r')
+        data = json.load(f)
+        f.close()
+        return data
+
+    def data_save(self, path, data):
+        f = open(path,'w')
+        json.dump(data,f)
+        f.close()
+
+    def coffe_m(self):
+        while True:
+            for k,v in self.item.items():
+                print(f'{k}:{v:,}원',end=' ')
+            print()
+            choice = input('메뉴선택(종료:enter) >>>')
+            if choice == '':
+                break
+            
+            money = ''
+            while not money.isdigit():
+                money = input('금액 투입 >>>')
+            money = int(money)
+
+            if choice in self.item.keys(): 
+                if money >= self.item[choice]:
+                    money -= self.item[choice]
+                    print(f'{choice} 서비스 합니다. 거스름돈은 {money}')
+                else:
+                    print('금액이 부족합니다.')
+            else:
+                print('해당 메뉴가 없습니다.')
+
+    def ins_m(self):
+        menu_name = input('메뉴명 >>>')
+        menu_price = ''
+        while not menu_price.isdigit(): #숫자값이면 나오고 숫자값이 아니면 계속 입력(진입)
+            menu_price = input('메뉴가격 >>>') #숫자형태가 들어올 때 까지 반복
+        menu_price = int(menu_price)
+        
+        if menu_name in self.item.keys():
+            print(f'{menu_name} 메뉴 중복, 다른 메뉴를 추가하세요.')
+        else:
+            print(f'{menu_name} 메뉴를 추가합니다.')
+        self.item[menu_name] = menu_price
+        print(self.item)
+
+    def del_m(self):
+        menu_name = input('삭제할 메뉴 >>>')
+        if menu_name in self.item.keys():
+            print(f'{menu_name} 메뉴 삭제')
+            del self.item[menu_name]
+        else:
+            print(f'{menu_name} 메뉴가 없습니다.')
+        print(self.item)
+
+    def list_m(self):
+        menu_1 = input('이름순: 1 가격순: 2 >>>')
+        if menu_1 == '1':
+            for k,v in sorted(self.item.items(),key=lambda x : x[0]):
+                print(f'{k:10} : {v:10,}원') #k값은 10자리 확보 // v 값은 천단위 구분, 10자리 확보
+        elif menu_1 == '2':
+            for k,v in sorted(self.item.items(),key=lambda x : x[1]):
+                print(f'{k:10} : {v:10,}원')
+
+    def menu_display(self):
+        menu_display = '''
+----------------------------------------------------------------------
+1. 커피자판기    2. 메뉴추가    3. 메뉴삭제   4. 메뉴목록    5. 종료
+======================================================================
+>>> '''
+        menu = input(menu_display)
+        return menu
+
+    # 실행 클래스
+    def exe(self, menu):
+            if menu == '1':
+                self.coffe_m()
+            elif menu == '2':
+                self.ins_m()
+            elif menu == '3':
+                self.del_m()
+            elif menu == '4':
+                self.list_m()
+            elif menu == '5':
+                self.data_save('python_basic/01_basic/item.json', self.item)
+                sys.exit()
+            else:
+                print('정확한 메뉴를 선택해주세요')
+    
+    def __init__(self):
+        self.item = self.data_load('python_basic/01_basic/item.json')
+
+        while True:
+            self.exe(self.menu_display())
+
+#coffee 라는 class 생성한다.
+coffee()
